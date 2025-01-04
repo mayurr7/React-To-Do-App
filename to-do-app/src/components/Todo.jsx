@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FaCheck } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 
@@ -6,6 +6,8 @@ const Todo = () => {
   const [inputValue, setInputValue] = useState("");
 
   const [task, setTask] = useState([]);
+
+  const [dateTime, setDateTime] = useState("");
 
   const handleInputChange = (value) => {
     setInputValue(value);
@@ -22,26 +24,48 @@ const Todo = () => {
       setInputValue("");
       return;
     }
-    console.log(inputValue);
 
     setTask((prevTask) => [...prevTask, inputValue]);
 
     setInputValue("");
   };
 
+  //Todo Date and Time
+
+  
+
+  
+
+
+  useEffect(() => {
+    const interval = setInterval (() => {
+
+      const now = new Date();
+      const formatedDate = now.toLocaleDateString();
+       const formatedTime = now.toLocaleTimeString();
+  
+      setDateTime(`${formatedDate}-${formatedTime}`)
+    },1000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <>
       <section>
         <header className="inline text-center text-4xl font-bold ">
           <h1 className="text-fuchsia-100">Todo List</h1>
+
+          <h2 className="text-fuchsia-100 font-normal p-6 text-lg">{dateTime}</h2>
         </header>
 
+ 
         <section>
           <form action="" onSubmit={handleFormSubmit}>
             <div className="flex justify-center items-center m-11">
               <input
                 type="text"
-                className="border border-gray-800 p-3 rounded-lg w-96 text-black  font-semibold placeholder-gray-500 focus:ring-2 focus:ring-gray-800"
+                className="border border-gray-800 p-3 rounded-lg w-96 text-black  font-semibold placeholder-gray-500 focus:ring-offset-emerald-200 focus:ring-gray-800"
                 autoComplete="off"
                 placeholder="Add task..."
                 value={inputValue}
@@ -69,7 +93,7 @@ const Todo = () => {
                 >
                   <li
                     key={index}
-                    className="flex items-center space-x-2 my-2 bg-slate-300 rounded-lg w-96 h-8 "
+                    className="flex items-center space-x-2 my-2 bg-slate-300 rounded-lg w-96 h-8  justify-center"
                   >
                     <span>{currTask}</span>
                   </li>
@@ -84,6 +108,10 @@ const Todo = () => {
             })}
           </ul>
         </section>
+
+        <div className="flex justify-center items-center text-white px-4 py-2 rounded">
+          <button className="rounded-2xl border-red-800 bg-red-400 w-28 h-10 hover:bg-red-700 my-9 ">Clear All</button>
+        </div>
       </section>
     </>
   );
