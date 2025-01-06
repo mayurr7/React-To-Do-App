@@ -50,6 +50,20 @@ const Todo = () => {
     return () => clearInterval(interval);
   }, []);
 
+  //delete todo function
+  const handleDeleteTodo = (value) => {
+   
+    const updateTask = task.filter((currEle) => currEle != value);
+    setTask(updateTask);
+  }
+
+//clear all function
+  const handleClearAll = () => {
+    setTask([]);
+  }
+
+ 
+
   return (
     <>
       <section>
@@ -97,10 +111,10 @@ const Todo = () => {
                   >
                     <span>{currTask}</span>
                   </li>
-                  <button className="text-green-500 hover:text-green-700">
+                  <button className="text-green-500 hover:text-green-700" >
                     <FaCheck />
                   </button>
-                  <button className="text-red-500 hover:text-red-700">
+                  <button className="text-red-500 hover:text-red-700"  onClick={() => handleDeleteTodo(currTask)}>
                     <MdDelete />
                   </button>
                 </div>
@@ -110,7 +124,7 @@ const Todo = () => {
         </section>
 
         <div className="flex justify-center items-center text-white px-4 py-2 rounded">
-          <button className="rounded-2xl border-red-800 bg-red-400 w-28 h-10 hover:bg-red-700 my-9 ">Clear All</button>
+          <button className="rounded-2xl border-red-800 bg-red-400 w-28 h-10 hover:bg-red-700 my-9 " onClick={handleClearAll}>Clear All</button>
         </div>
       </section>
     </>
