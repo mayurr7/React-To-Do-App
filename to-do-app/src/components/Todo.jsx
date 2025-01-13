@@ -5,40 +5,57 @@ import TodoForm from "./TodoForm";
 
 const Todo = () => {
   const [task, setTask] = useState([]);
-
   const [dateTime, setDateTime] = useState("");
 
   const handleFormSubmit = (inputValue) => {
-    if (!inputValue) return;
-    
-    if (task.includes(inputValue)) return;
-    
-    setTask((prevTask) => [...prevTask, inputValue]);
+    const { id, content, checked } = inputValue;
+    if (!content) return;
+
+    const ifTodoContentMatched = task.find(
+      (currTask) => currTask.content === content
+    );
+
+    if (ifTodoContentMatched) return;
+
+    setTask((prevTask) => [...prevTask, { id, content, checked }]);
   };
 
-  //Todo Date and Time
-
+  // Todo Date and Time
   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       const formatedDate = now.toLocaleDateString();
       const formatedTime = now.toLocaleTimeString();
 
-      setDateTime(`${formatedDate}-${formatedTime}`);
+      setDateTime(`${formatedDate} - ${formatedTime}`);
     }, 1000);
 
     return () => clearInterval(interval);
   }, []);
 
-  //delete todo function
-  const handleDeleteTodo = (value) => {
-    const updateTask = task.filter((currEle) => currEle != value);
-    setTask(updateTask);
+  // Delete todo function
+  const handleDeleteTodo = (id) => {
+    const updatedTask = task.filter((currTask) => currTask.id !== id);
+    setTask(updatedTask);
   };
 
-  //clear all function
+  // Clear all function
   const handleClearAll = () => {
     setTask([]);
+  };
+
+  // Toggle checked status and color
+  const handleToggleChecked = (id) => {
+    setTask((prevTask) =>
+      prevTask.map((currTask) =>
+        currTask.id === id
+          ? {
+              ...currTask,
+              checked: !currTask.checked, // Toggle checked status
+            }
+          : currTask
+      )
+    );
   };
 
   return (
@@ -46,7 +63,6 @@ const Todo = () => {
       <section>
         <header className="inline text-center text-4xl font-bold ">
           <h1 className="text-fuchsia-100">Todo List</h1>
-
           <h2 className="text-fuchsia-100 font-normal p-6 text-lg">
             {dateTime}
           </h2>
@@ -58,24 +74,30 @@ const Todo = () => {
 
         <section>
           <ul>
-            {task.map((currTask, index) => {
+            {task.map((currTask) => {
               return (
                 <div
-                  key={index}
+                  key={currTask.id} // Use unique id as key
                   className="flex items-center space-x-4 my-2 justify-center font-medium text-xl"
                 >
                   <li
-                    key={index}
-                    className="flex items-center space-x-2 my-2 bg-slate-300 rounded-lg w-96 h-8  justify-center"
+                    className={`flex items-center space-x-2 my-2 bg-slate-300 rounded-lg w-96 h-8 justify-center ${
+                      currTask.checked
+                        ? "line-through text-red-600" // Apply strikethrough and red color when checked
+                        : "text-black"
+                    }`} // Default text color if not checked
                   >
-                    <span>{currTask}</span>
+                    <span>{currTask.content}</span> {/* Render content */}
                   </li>
-                  <button className="text-green-500 hover:text-green-700">
+                  <button
+                    className="text-green-500 hover:text-green-700"
+                    onClick={() => handleToggleChecked(currTask.id)} // Toggle checked status
+                  >
                     <FaCheck />
                   </button>
                   <button
                     className="text-red-500 hover:text-red-700"
-                    onClick={() => handleDeleteTodo(currTask)}
+                    onClick={() => handleDeleteTodo(currTask.id)} // Delete task by id
                   >
                     <MdDelete />
                   </button>
