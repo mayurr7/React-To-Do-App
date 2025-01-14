@@ -4,8 +4,15 @@ import { MdDelete } from "react-icons/md";
 import TodoForm from "./TodoForm";
 
 const Todo = () => {
-  const [task, setTask] = useState([]);
+  const [task, setTask] = useState(() => {
+    const savedTasks = localStorage.getItem("reactTodo");
+    return savedTasks ? JSON.parse(savedTasks) : [];
+  });
   const [dateTime, setDateTime] = useState("");
+
+  useEffect(() => {
+    localStorage.setItem("reactTodo", JSON.stringify(task));
+  }, [task]);
 
   const handleFormSubmit = (inputValue) => {
     const { id, content, checked } = inputValue;
@@ -19,9 +26,24 @@ const Todo = () => {
 
     setTask((prevTask) => [...prevTask, { id, content, checked }]);
   };
+  
 
-  // Todo Date and Time
-  useEffect(() => {
+ 
+
+ 
+  // Delete todo function
+  const handleDeleteTodo = (id) => {
+    const updatedTask = task.filter((currTask) => currTask.id !== id);
+    setTask(updatedTask);
+  };
+
+  // Clear all function
+  const handleClearAll = () => {
+    setTask([]);
+  };
+
+   // Todo Date and Time
+   useEffect(() => {
     const interval = setInterval(() => {
       const now = new Date();
       const formatedDate = now.toLocaleDateString();
@@ -33,16 +55,6 @@ const Todo = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Delete todo function
-  const handleDeleteTodo = (id) => {
-    const updatedTask = task.filter((currTask) => currTask.id !== id);
-    setTask(updatedTask);
-  };
-
-  // Clear all function
-  const handleClearAll = () => {
-    setTask([]);
-  };
 
   // Toggle checked status and color
   const handleToggleChecked = (id) => {
